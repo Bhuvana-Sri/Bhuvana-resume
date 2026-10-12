@@ -22,3 +22,18 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+.agents/**/*
+.claude/**/*
+
+# Impeccable working files (keep config.json and briefs)
+.impeccable/**/*
+
+# Env and tooling
+.env
+.env.*
+!.env.example
+.vercel
+coverage
+*.tsbuildinfo
+.eslintcache
