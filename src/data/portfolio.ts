@@ -97,7 +97,7 @@ export const sideProjects: Project[] = [
       "Turns dreams into illustrated graphic novels with Claude and Gemini. Use the free tier or bring your own API key.",
     url: "https://dream-catcher-sable.vercel.app/",
     stack: ["React", "Express", "Claude", "Gemini"],
-    image: { src: dreamCatcherImage, width: 1400, height: 1024 },
+    image: { src: dreamCatcherImage, width: 1600, height: 924 },
   },
 ];
 
