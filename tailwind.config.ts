@@ -5,13 +5,13 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        sans: [
-          '"Jost Variable"',
-          "ui-sans-serif",
-          "system-ui",
-          "sans-serif",
+        sans: ['"Jost Variable"', "ui-sans-serif", "system-ui", "sans-serif"],
+        serif: [
+          '"Cormorant Garamond Variable"',
+          "ui-serif",
+          "Georgia",
+          "serif",
         ],
-        serif: ['"Cormorant Garamond Variable"', "ui-serif", "Georgia", "serif"],
         code: ['"JetBrains Mono Variable"', "ui-monospace", "monospace"],
       },
       colors: {
