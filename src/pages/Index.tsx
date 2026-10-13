@@ -2,7 +2,6 @@ import { useEffect, useRef, useState, type ReactNode } from "react";
 import {
   ArrowUp,
   ArrowUpRight,
-  Cat,
   Github,
   Linkedin,
   MapPin,
@@ -49,19 +48,53 @@ const useActiveSection = (ids: string[]) => {
   const [active, setActive] = useState(ids[0]);
 
   useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) setActive(entry.target.id);
-        });
-      },
-      { rootMargin: "-40% 0px -55% 0px" },
-    );
-    ids.forEach((id) => {
-      const el = document.getElementById(id);
-      if (el) observer.observe(el);
-    });
-    return () => observer.disconnect();
+    // A section picked from a link stays highlighted until the reader scrolls
+    // by hand. Short sections near the end can never reach the reading line,
+    // so without this the highlight would land on whatever sits above them.
+    let pinned: string | null = null;
+
+    const update = () => {
+      if (pinned) return setActive(pinned);
+      const atBottom =
+        window.innerHeight + window.scrollY >=
+        document.documentElement.scrollHeight - 2;
+      if (atBottom) return setActive(ids[ids.length - 1]);
+      const line = window.innerHeight * 0.4;
+      let current = ids[0];
+      for (const id of ids) {
+        const el = document.getElementById(id);
+        if (el && el.getBoundingClientRect().top <= line) current = id;
+      }
+      setActive(current);
+    };
+
+    const onClick = (e: MouseEvent) => {
+      const link = (e.target as Element).closest?.('a[href^="#"]');
+      const id = link?.getAttribute("href")?.slice(1);
+      if (id && ids.includes(id)) {
+        pinned = id;
+        setActive(id);
+      }
+    };
+    const unpin = () => {
+      pinned = null;
+    };
+
+    update();
+    window.addEventListener("scroll", update, { passive: true });
+    window.addEventListener("resize", update);
+    document.addEventListener("click", onClick);
+    window.addEventListener("wheel", unpin, { passive: true });
+    window.addEventListener("touchmove", unpin, { passive: true });
+    window.addEventListener("keydown", unpin);
+    return () => {
+      window.removeEventListener("scroll", update);
+      window.removeEventListener("resize", update);
+      document.removeEventListener("click", onClick);
+      window.removeEventListener("wheel", unpin);
+      window.removeEventListener("touchmove", unpin);
+      window.removeEventListener("keydown", unpin);
+    };
   }, [ids]);
 
   return active;
@@ -255,7 +288,46 @@ const NavList = ({
   </ul>
 );
 
+/** The cat and its speech bubble: beside it in the rail, below it in the mobile menu. */
 const CatButton = ({
+  onCat,
+  talking,
+  summon,
+  placement,
+}: {
+  onCat: () => void;
+  talking: boolean;
+  summon: number;
+  placement: "side" | "below";
+}) => (
+  <div className="relative">
+    <CatToggle onCat={onCat} talking={talking} summon={summon} />
+    <div
+      role="status"
+      aria-live="polite"
+      className={`pointer-events-none absolute z-30 w-max ${
+        placement === "side"
+          ? "bottom-1 left-full ml-3"
+          : "right-0 top-full mt-2"
+      }`}
+    >
+      {talking && (
+        <div
+          key={summon}
+          className={`max-w-[17rem] rounded-2xl border border-border-strong bg-elevated px-4 py-3 text-sm text-foreground shadow-[0_12px_32px_-12px_rgba(0,0,0,0.6)] [animation:cat-pop_.45s_cubic-bezier(.22,1,.36,1)_both] ${
+            placement === "side"
+              ? "origin-bottom-left rounded-bl-sm"
+              : "origin-top-right rounded-tr-sm"
+          }`}
+        >
+          {CAT_LINES[(summon - 1) % CAT_LINES.length]}
+        </div>
+      )}
+    </div>
+  </div>
+);
+
+const CatToggle = ({
   onCat,
   talking,
   summon,
@@ -268,28 +340,62 @@ const CatButton = ({
     type="button"
     onClick={onCat}
     aria-label="Say hi to the cat"
-    className={`group grid h-10 w-10 place-items-center rounded-full border transition-colors ${
-      talking
-        ? "border-primary text-primary"
-        : "border-border-strong text-subtle hover:border-primary hover:text-primary"
+    className={`group -ml-1 grid h-12 w-12 place-items-end justify-start transition-colors ${
+      talking ? "text-primary" : "text-subtle hover:text-primary"
     }`}
   >
-    {/* Keyed by click count so the wiggle restarts on every click. */}
-    <Cat
+    {/* Keyed by click count so the hop restarts on every click. */}
+    <span
       key={summon}
-      size={18}
-      strokeWidth={1.75}
-      aria-hidden
-      className={
-        talking
-          ? "[animation:cat-talk_.9s_ease-in-out_2]"
-          : "group-hover:[animation:cat-wiggle_.6s_ease-in-out]"
-      }
-    />
+      className={`block origin-bottom ${
+        talking ? "[animation:cat-hop_.7s_cubic-bezier(.3,0,.3,1)_2]" : ""
+      }`}
+    >
+      <CatFigure talking={talking} />
+    </span>
   </button>
 );
 
-const RAIL_PATTERN = `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32'%3E%3Cpath d='M16 12v8M12 16h8' stroke='%23efe9e1' stroke-opacity='0.14' stroke-width='1'/%3E%3C/svg%3E")`;
+/** A sitting cat: the tail sways, the eyes blink, and it stretches up on hover. */
+const CatFigure = ({ talking }: { talking: boolean }) => (
+  <svg
+    viewBox="0 0 32 32"
+    width={36}
+    height={36}
+    aria-hidden
+    className="block origin-bottom transition-transform duration-300 ease-[cubic-bezier(.34,1.56,.64,1)] group-hover:scale-[1.18]"
+  >
+    <path
+      d="M20.5 29.5c4 0 7-1.8 7-5.2 0-2.2-1.6-3.3-3-2.6"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={2.2}
+      strokeLinecap="round"
+      className={`[transform-box:fill-box] [transform-origin:0%_100%] ${
+        talking
+          ? "[animation:cat-tail_.5s_ease-in-out_infinite]"
+          : "[animation:cat-tail_2.8s_ease-in-out_infinite] group-hover:[animation-duration:.8s]"
+      }`}
+    />
+    <path
+      d="M9.5 30c0-7.2 2.6-11.8 6.5-11.8s6.5 4.6 6.5 11.8Z"
+      fill="currentColor"
+    />
+    <path
+      d="M10.4 11.6 10.8 4l4.3 4.1a8 8 0 0 1 1.8 0L21.2 4l.4 7.6a6 6 0 0 1-5.6 8.4 6 6 0 0 1-5.6-8.4Z"
+      fill="currentColor"
+    />
+    <g
+      fill="hsl(var(--elevated))"
+      className="[transform-box:fill-box] [transform-origin:center] [animation:cat-blink_4.5s_infinite]"
+    >
+      <ellipse cx={13.6} cy={13} rx={1} ry={1.3} />
+      <ellipse cx={18.4} cy={13} rx={1} ry={1.3} />
+    </g>
+  </svg>
+);
+
+const RAIL_PATTERN = `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='56' height='56'%3E%3Cpath d='M11.2 11.2l5.6 5.6M16.8 11.2l-5.6 5.6M39.2 39.2l5.6 5.6M44.8 39.2l-5.6 5.6' stroke='%23efe9e1' stroke-opacity='0.14' stroke-width='1'/%3E%3C/svg%3E")`;
 
 const Rail = ({
   active,
@@ -303,16 +409,21 @@ const Rail = ({
   summon: number;
 }) => (
   <aside className="fixed inset-y-0 left-0 z-20 hidden w-52 isolate flex-col justify-between border-r bg-elevated px-9 pb-8 pt-16 lg:flex">
-    {/* A quiet grid of plus marks, only in the menu. */}
+    {/* Small x marks staggered on a diagonal lattice, only in the menu. */}
     <div
       aria-hidden
       className="pointer-events-none absolute inset-0 -z-10"
-      style={{ backgroundImage: RAIL_PATTERN, backgroundSize: "32px 32px" }}
+      style={{ backgroundImage: RAIL_PATTERN, backgroundSize: "56px 56px" }}
     />
     <nav aria-label="Sections">
       <NavList active={active} />
     </nav>
-    <CatButton onCat={onCat} talking={talking} summon={summon} />
+    <CatButton
+      onCat={onCat}
+      talking={talking}
+      summon={summon}
+      placement="side"
+    />
   </aside>
 );
 
@@ -328,12 +439,31 @@ const MobileBar = ({
   summon: number;
 }) => {
   const [open, setOpen] = useState(false);
+  const barRef = useRef<HTMLDivElement>(null);
+
+  // A tap anywhere outside the bar, or Escape, closes the menu.
+  useEffect(() => {
+    if (!open) return;
+    const onPointerDown = (e: PointerEvent) => {
+      if (!barRef.current?.contains(e.target as Node)) setOpen(false);
+    };
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setOpen(false);
+    };
+    document.addEventListener("pointerdown", onPointerDown);
+    document.addEventListener("keydown", onKeyDown);
+    return () => {
+      document.removeEventListener("pointerdown", onPointerDown);
+      document.removeEventListener("keydown", onKeyDown);
+    };
+  }, [open]);
+
   return (
-    <div className="sticky top-0 z-20 border-b bg-background lg:hidden">
-      <div className="flex h-14 items-center justify-between px-5 sm:px-8">
-        <a href="#home" className="font-serif text-lg font-medium">
-          Bhuvana Sundaram
-        </a>
+    <div
+      ref={barRef}
+      className="sticky top-0 z-20 border-b bg-background lg:hidden"
+    >
+      <div className="flex h-14 items-center justify-end px-5 sm:px-8">
         <button
           type="button"
           onClick={() => setOpen((o) => !o)}
@@ -352,7 +482,12 @@ const MobileBar = ({
           className="flex items-end justify-between border-t bg-elevated px-5 pb-6 pt-3 sm:px-8"
         >
           <NavList active={active} onNavigate={() => setOpen(false)} />
-          <CatButton onCat={onCat} talking={talking} summon={summon} />
+          <CatButton
+            onCat={onCat}
+            talking={talking}
+            summon={summon}
+            placement="below"
+          />
         </nav>
       )}
     </div>
@@ -382,7 +517,7 @@ const RotatingWord = ({ words }: { words: string[] }) => {
         <span
           key={w}
           aria-hidden
-          className={`col-start-1 row-start-1 font-code text-[1.0625rem] font-semibold transition-[opacity,filter,transform] duration-500 ease-out ${
+          className={`col-start-1 row-start-1 font-semibold text-primary transition-[opacity,filter,transform] duration-500 ease-out ${
             i === index
               ? "translate-y-0 opacity-100 blur-0"
               : "translate-y-1 opacity-0 blur-[3px]"
@@ -403,7 +538,7 @@ const Hero = () => (
       className={`${container} grid items-center gap-10 pb-16 pt-12 md:grid-cols-[minmax(0,1fr)_16rem] md:pt-20 lg:grid-cols-[minmax(0,1fr)_19rem] lg:gap-20 lg:pb-20`}
     >
       <div>
-        <p className="text-sm font-medium text-primary">
+        <p className="text-sm font-medium text-muted-foreground">
           Frontend-focused full-stack engineer who writes{" "}
           <RotatingWord words={LANGUAGES} />
         </p>
@@ -487,9 +622,12 @@ const About = () => (
       </p>
       <p>
         Before that I built security analytics at F5 and owned the payments
-        module at Oracle, where it earned a{" "}
-        <span className="text-primary">Spot Award</span>. I work with Cursor and
-        Claude every day, and still care about the details AI tends to skip.
+        module at Oracle, where I earned a{" "}
+        <span className="text-primary">Spot Award</span> for ownership.
+      </p>
+      <p>
+        I work with Cursor and Claude every day, and care about the details AI
+        tends to skip.
       </p>
     </div>
   </Section>
@@ -543,6 +681,9 @@ const CompactRow = ({ project }: { project: Project }) => (
         </p>
       </div>
     </a>
+    <div className="mt-3 pl-[calc(8rem+1.25rem)]">
+      <Tags items={project.stack} />
+    </div>
   </li>
 );
 
@@ -808,7 +949,7 @@ const Contact = () => (
           Let's <Accent>talk</Accent>
         </>
       }
-      intro="Hiring for a frontend role, curious about something I built, or have a book to recommend? Write to me."
+      intro="Hiring for a frontend role, curious about something I built, or have a book to recommend? Send me a mail"
     />
     <div className="mt-8 flex flex-wrap items-center gap-x-7 gap-y-1">
       <a
@@ -849,29 +990,6 @@ const useCat = () => {
 
   return { summon, talking, call };
 };
-
-const CatBubble = ({
-  summon,
-  talking,
-}: {
-  summon: number;
-  talking: boolean;
-}) => (
-  <div
-    role="status"
-    aria-live="polite"
-    className="pointer-events-none fixed bottom-6 left-5 z-30 lg:bottom-8 lg:left-[5.25rem]"
-  >
-    {talking && (
-      <div
-        key={summon}
-        className="relative max-w-[17rem] origin-bottom-left rounded-2xl rounded-bl-sm border border-border-strong bg-elevated px-4 py-3 text-sm shadow-[0_12px_32px_-12px_rgba(0,0,0,0.6)] [animation:cat-pop_.45s_cubic-bezier(.22,1,.36,1)_both]"
-      >
-        {CAT_LINES[(summon - 1) % CAT_LINES.length]}
-      </div>
-    )}
-  </div>
-);
 
 const BackToTop = ({ show }: { show: boolean }) => (
   <a
@@ -1029,7 +1147,6 @@ const Index = () => {
         <Footer />
       </div>
       <BackToTop show={pastHero} />
-      <CatBubble summon={cat.summon} talking={cat.talking} />
     </div>
   );
 };

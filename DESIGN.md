@@ -13,34 +13,34 @@ colors:
   hairline-strong: "hsl(35 30% 91% / 0.2)"
 typography:
   display:
-    fontFamily: "Literata Variable, ui-serif, Georgia, serif"
+    fontFamily: "Cormorant Garamond Variable, ui-serif, Georgia, serif"
     fontSize: "clamp(2.75rem, 6vw, 4.5rem)"
     fontWeight: 500
     lineHeight: 1.05
     letterSpacing: "-0.025em"
   headline:
-    fontFamily: "Literata Variable, ui-serif, Georgia, serif"
+    fontFamily: "Cormorant Garamond Variable, ui-serif, Georgia, serif"
     fontSize: "clamp(2rem, 3.6vw, 2.75rem)"
     fontWeight: 500
     lineHeight: 1.1
     letterSpacing: "-0.02em"
   title:
-    fontFamily: "Literata Variable, ui-serif, Georgia, serif"
+    fontFamily: "Cormorant Garamond Variable, ui-serif, Georgia, serif"
     fontSize: "1.25rem"
     fontWeight: 500
     lineHeight: 1.25
   body-lead:
-    fontFamily: "Hanken Grotesk Variable, ui-sans-serif, system-ui, sans-serif"
+    fontFamily: "Jost Variable, ui-sans-serif, system-ui, sans-serif"
     fontSize: "1.125rem"
     fontWeight: 400
     lineHeight: 1.6
   body:
-    fontFamily: "Hanken Grotesk Variable, ui-sans-serif, system-ui, sans-serif"
+    fontFamily: "Jost Variable, ui-sans-serif, system-ui, sans-serif"
     fontSize: "0.9375rem"
     fontWeight: 400
     lineHeight: 1.6
   label:
-    fontFamily: "Hanken Grotesk Variable, ui-sans-serif, system-ui, sans-serif"
+    fontFamily: "Jost Variable, ui-sans-serif, system-ui, sans-serif"
     fontSize: "0.875rem"
     fontWeight: 500
     lineHeight: 1.43
@@ -121,7 +121,7 @@ Density is relaxed and editorial. Edges are square, surfaces are flat, depth com
 
 **Key Characteristics:**
 - Dark only; ink-navy ground, warm text, a single marigold accent.
-- Literata headings with one italic marigold word; Hanken Grotesk body; JetBrains Mono for dates and the rotating word.
+- Cormorant Garamond headings with one italic marigold word; Jost body; JetBrains Mono for dates. The rotating language in the hero is Jost semibold in marigold.
 - Square corners everywhere except small circular controls.
 - Underlined text links; no filled buttons.
 - Flat tonal layering with hairline borders; shadows only on floating overlays.
@@ -149,12 +149,12 @@ A near-monochrome warm-on-ink palette with one saturated marigold that is reserv
 
 **The Borrowed Border Rule.** Borders are always the text colour at 10% or 20% alpha, never a separate grey, so lines stay warm on the navy ground.
 
-**The Two Pools Rule.** The content background carries two faint fixed radial gradients: a marigold glow at 7% from the top right and a deep blue pool (hsl(229 55% 22% / 0.45)) from the bottom left. The menu rail alone carries a 32px grid of faint plus marks (text colour at 14%). Neither pattern appears anywhere else.
+**The Two Pools Rule.** The content background carries two faint fixed radial gradients: a marigold glow at 7% from the top right and a deep blue pool (hsl(229 55% 22% / 0.45)) from the bottom left. The menu rail alone carries a staggered diagonal lattice of faint x marks (56px tile, one mark at each corner quarter so rows offset) (text colour at 14%). Neither pattern appears anywhere else.
 
 ## Typography
 
-**Display Font:** Literata Variable (with ui-serif, Georgia)
-**Body Font:** Hanken Grotesk Variable (with ui-sans-serif, system-ui)
+**Display Font:** Cormorant Garamond Variable (with ui-serif, Georgia)
+**Body Font:** Jost Variable (with ui-sans-serif, system-ui)
 **Label/Mono Font:** JetBrains Mono Variable (with ui-monospace)
 
 **Character:** A bookish, optical-size serif for headings against a clean, slightly warm grotesk for reading; the mono is a small engineer's signature, used sparingly.
@@ -177,7 +177,7 @@ A near-monochrome warm-on-ink palette with one saturated marigold that is reserv
 
 ## Layout
 
-Desktop (1024px and up) is a fixed left rail (13rem) on Ink Elevated with section nav at the top and the cat button at the bottom; content sits to its right in a centred column capped at 68rem with 20 / 32 / 64px side gutters by breakpoint. Below 1024px the rail becomes a sticky 56px top bar with the name in Literata and a Menu text button that opens an elevated drawer holding the same nav and cat.
+Desktop (1024px and up) is a fixed left rail (13rem) on Ink Elevated with section nav at the top and the cat button at the bottom; content sits to its right in a centred column capped at 68rem with 20 / 32 / 64px side gutters by breakpoint. Below 1024px the rail becomes a sticky 56px top bar with only a right-aligned Menu text button; it opens an elevated drawer holding the same nav and cat, and a tap outside the bar or Escape closes it.
 
 Sections are stacked full-width bands separated by a top hairline, with 64px vertical padding (96px from 768px). The hero is roughly 88% of the viewport tall on desktop, with text left and a 4:5 portrait right (up to 19rem). Grids: featured work 2 columns; earlier work 2 columns of compact rows (8rem thumbnail plus text); personal projects 2 then 3 columns; experience as rows with a 14rem company column; toolkit 2 / 3 / 4 columns; outside work a 12-column collage (5 + 7) where the tall photo stretches to match its neighbours. Anchor scrolling is smooth with a scroll padding of 1.5rem (4.5rem under the mobile bar).
 
@@ -194,7 +194,7 @@ The page is flat. Depth is tonal: Ink Navy ground, Ink Elevated for the rail, ca
 
 ## Shapes
 
-Square corners (0px) are the default for every surface: images, screenshots, cards, chips, tags, tiles, overlays. The radius exceptions are small, round, icon-only controls (the 40px cat button and the 36px back-to-top button, fully round) and the cat's speech bubble (16px with a 2px tail corner at bottom left), which belongs to the easter egg. Screenshots carry a strong hairline frame; portrait and outside-work photos sit unframed. List bullets in experience are small rotated squares outlined in Marigold.
+Square corners (0px) are the default for every surface: images, screenshots, cards, chips, tags, tiles, overlays. The radius exceptions are small, round, icon-only controls (the 36px back-to-top button, fully round) and the cat's speech bubble (16px with a 2px tail corner at bottom left), which belongs to the easter egg. Screenshots carry a strong hairline frame; portrait and outside-work photos sit unframed. List bullets in experience are small rotated squares outlined in Marigold.
 
 ## Components
 
@@ -221,11 +221,11 @@ Understated and typographic; the site has no filled buttons.
 - **Mobile:** sticky top bar on the ground colour with a hairline bottom; Menu / Close text button with a small icon reveals an elevated drawer.
 
 ### Round controls
-- **Cat button:** 40px circle, Hairline Strong border, Warm Subtle icon; hover or talking turns border and icon Marigold, with a short wiggle.
+- **Cat button:** a borderless 36px sitting-cat silhouette in Warm Subtle whose tail sways and eyes blink at rest; hover grows it 18% with a springy ease and quickens the tail; talking turns it Marigold, wags the tail fast and makes it hop twice.
 - **Back to top:** 36px circle on Ink Elevated, fixed bottom right, appears after the hero leaves view with a fade and 8px rise.
 
 ### Cat easter egg (signature)
-Clicking the menu cat shows a speech bubble near the bottom left for six seconds: Ink Elevated, Hairline Strong border, 0.875rem text, the bubble radius described in Shapes, and a short spring pop-in. Lines cycle on each click and are announced politely to screen readers.
+Clicking the menu cat shows a speech bubble anchored to it for six seconds (to its right in the desktop rail, just below it in the mobile menu): Ink Elevated, Hairline Strong border, 0.875rem text, the bubble radius described in Shapes, and a short spring pop-in. Lines cycle on each click and are announced politely to screen readers.
 
 ## Do's and Don'ts
 
@@ -244,4 +244,4 @@ Clicking the menu cat shows a speech bubble near the bottom left for six seconds
 - **Don't** put shadows on in-flow content; only floating overlays get one.
 - **Don't** use JetBrains Mono for labels, tags or navigation.
 - **Don't** add the starfields, glass cards, gradient text, floating blobs or magnetic buttons of the old site (PRODUCT.md anti-reference).
-- **Don't** extend the plus-mark grid or the radial glows to other surfaces; the grid belongs to the rail, the glows to the page ground.
+- **Don't** extend the x-mark grid or the radial glows to other surfaces; the grid belongs to the rail, the glows to the page ground.

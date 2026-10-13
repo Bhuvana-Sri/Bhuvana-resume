@@ -38,7 +38,7 @@ export const workProjects: Project[] = [
     description:
       "Built and led the UI architecture of Aerospike's DBaaS platform from the first commit, with enterprise integrations for auth, billing, analytics and feature flags.",
     url: "https://aerospike.com/products/aerospike-cloud/",
-    stack: ["React", "Next.js", "Redux", "i18n"],
+    stack: ["React", "Next.js", "Redux", "i18n", "Go"],
     image: { src: aerospikeCloudImage, width: 1024, height: 650 },
   },
   {
@@ -56,7 +56,7 @@ export const workProjects: Project[] = [
     description:
       "Security-focused UI for attack analytics, mitigation and real-time monitoring.",
     url: "https://www.f5.com/",
-    stack: ["React", "TypeScript", "D3"],
+    stack: ["React", "TypeScript", "D3", "Python"],
     image: { src: eapImage, width: 299, height: 168 },
   },
   {
@@ -255,7 +255,7 @@ export const stack: Tool[] = [
   { name: "Java", logo: "openjdk" },
   { name: "Node.js", logo: "nodedotjs" },
   { name: "Express", logo: "express" },
-  { name: "Supabase", logo: "supabase" },
+  { name: "Databases", logo: "database" },
 ];
 
 export const aiTools: Tool[] = [
